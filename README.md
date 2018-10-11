@@ -1,6 +1,6 @@
 BrainFuck-Interpreter.js
 ==
-A JS BrandFuck Interpreter.
+A online JS BrandFuck Interpreter.
 
 ## Usage
 1. Put your bf code in `code:` and maybe some input.  
