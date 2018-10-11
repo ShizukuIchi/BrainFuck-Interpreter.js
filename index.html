@@ -4,16 +4,44 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="style.css">
   <title>BF-Interpreter.js</title>
 </head>
 <body>
-  <div id="code">Code:<input type="text"></div>
-  <div id="input">Input:<input type="text"></div>
-  <button id="run">Run</button>
-  <button id="step">Step</button>
-  <div id="output">
-    Output:<span></span>
+  <section class="header">
+    <h1 class="title">BrainFuck-Interpreter.js</h1>
+    <img class="settings" src="settings.svg" alt="settings">
+  </section>
+  <section class="container">
+    <div class="hint">Code :</div>
+    <textarea name="code" id="code"></textarea>
+    <div class="hint">Input :</div>
+    <textarea name="input" id="input"></textarea>
+    
+    <div class="hint">
+      Output :
+    </div>
+    <textarea name="output" id="output" readonly></textarea>
+    <div class="buttons">
+      <button id="run">Run</button>
+      <button id="step">Step</button>
+      <button id="reset">Reset</button>
+      <span id="alert"></span>
+    </div>
+  </section>
+  <div class="settings-overlay">
+    <div class="settings-container">
+      <div class="setting">
+        <span class="setting-title">Steps per click :</span>
+        <div class="setting-content">
+          <button id="sub-step" class="setting-option">-</button>        
+          <div id="steps" class="setting-value"></div>
+          <button id="add-step" class="setting-option">+</button>
+        </div>
+      </div>
+    </div>
   </div>
   <script src="BF.js"></script>
+  <script src="index.js"></script>  
 </body>
 </html>

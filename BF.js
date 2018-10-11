@@ -1,8 +1,9 @@
 class BF {
-  constructor(commands = '', options = {}) {
-    this.options = options;
+  constructor(commands = "") {
     this.commands = commands;
-    this.buffer = '';
+    this.steps = 1
+    this.buffer = ''
+    this.ceils = 10
     this.reset();
   }
   add() {
@@ -16,18 +17,18 @@ class BF {
   addPtr() {
     this.ptr += 1;
     if (this.ptr >= this.memory.length)
-      throw new Error('Memory range exceeded!');
+      throw new Error("Memory range exceeded!");
   }
   subPtr() {
     this.ptr -= 1;
-    if (this.ptr < 0) throw new Error('Negative pointer!');
+    if (this.ptr < 0) throw new Error("Negative pointer!");
   }
   getChar() {
     let tmp;
     if (this.buffer.length > 0) {
       tmp = this.buffer.charCodeAt(0);
     } else {
-      throw new Error('Buffer reach end!');
+      throw new Error("Buffer reach end!");
     }
     this.buffer = this.buffer.slice(1);
     this.memory[this.ptr] = tmp;
@@ -40,8 +41,8 @@ class BF {
       let loops = 1;
       while (loops) {
         this.commandIndex += 1;
-        if (this.commands[this.commandIndex] === '[') loops += 1;
-        if (this.commands[this.commandIndex] === ']') loops -= 1;
+        if (this.commands[this.commandIndex] === "[") loops += 1;
+        if (this.commands[this.commandIndex] === "]") loops -= 1;
       }
     }
   }
@@ -49,133 +50,118 @@ class BF {
     let loops = 1;
     while (loops) {
       this.commandIndex -= 1;
-      if (this.commands[this.commandIndex] === ']') loops += 1;
-      if (this.commands[this.commandIndex] === '[') loops -= 1;
+      if (this.commands[this.commandIndex] === "]") loops += 1;
+      if (this.commands[this.commandIndex] === "[") loops -= 1;
     }
     this.commandIndex -= 1;
   }
   next() {
     this.commandIndex += 1;
+    this.totalSteps += 1;
   }
-  read(str) {
-    if (!(typeof str === 'string')) {
-      throw new Error('Input should be string!');
+  input(str) {
+    if (!(typeof str === "string")) {
+      throw new Error("Input should be string!");
     }
     this.buffer += str;
   }
-  readline(str) {
-    this.read(`${str}\n`);
-  }
   reset() {
     this.commandIndex = 0;
-    this.memory = Array(
-      this.options.ceils ? Number(this.options.ceils) : 1000,
-    ).fill(0);
+    this.memory = Array(this.ceils).fill(0);
     this.ptr = 0;
-    this.output = '';
+    this.output = "";
     this.loops = 0;
+    this.totalSteps = 0
+    this.stopped = false
+  }
+  setCeils(ceils) {
+    this.ceils = ceils;
+  }
+  setSteps(steps) {
+    this.steps = steps;
   }
   start() {
     this.reset();
     while (this.commandIndex < this.commands.length) {
       const command = this.commands[this.commandIndex];
       switch (command) {
-        case '+':
+        case "+":
           this.add();
           break;
-        case '-':
+        case "-":
           this.sub();
           break;
-        case '>':
+        case ">":
           this.addPtr();
           break;
-        case '<':
+        case "<":
           this.subPtr();
           break;
-        case ',':
+        case ",":
           this.getChar();
           break;
-        case '.':
+        case ".":
           this.putChar();
           break;
-        case '[':
+        case "[":
           this.loopStart();
           break;
-        case ']':
+        case "]":
           this.loopEnd();
           break;
-        case '\n':
-        case ' ':
+        case "\n":
+        case " ":
           break;
         default:
           throw new Error(`Command '${command}' not found!`);
       }
       this.next();
     }
+    this.stopped = true
+    console.log(`Command reach end in ${this.totalSteps} steps.`);
   }
-  step(n = 1) {
+  step(n = this.steps) {
     while (this.commandIndex < this.commands.length && n--) {
       const command = this.commands[this.commandIndex];
       switch (command) {
-        case '+':
+        case "+":
           this.add();
           break;
-        case '-':
+        case "-":
           this.sub();
           break;
-        case '>':
+        case ">":
           this.addPtr();
           break;
-        case '<':
+        case "<":
           this.subPtr();
           break;
-        case ',':
+        case ",":
           this.getChar();
           break;
-        case '.':
+        case ".":
           this.putChar();
           break;
-        case '[':
+        case "[":
           this.loopStart();
           break;
-        case ']':
+        case "]":
           this.loopEnd();
           break;
-        case '\n':
-        case ' ':
+        case "\n":
+        case " ":
           break;
         default:
           throw new Error(`Command '${command}' not found!`);
       }
       this.next();
     }
-    if (this.commandIndex === this.commands.length) {
-      console.log('Command reach end.');
-      n = 0;
-    }
     console.table(this);
+    if (this.commandIndex >= this.commands.length) {
+      console.log(`Command reach end at step ${this.totalSteps}.`);
+      this.stopped = true    
+    } else {
+      console.log(`Now at step ${this.totalSteps}.`)
+    }
   }
 }
-
-let ran = false;
-let bf;
-document.querySelector('#run').onclick = () => {
-  ran = false;
-  document.querySelector('#output span').innerText = '';
-  bf = new BF(document.querySelector('#code input').value);
-  bf.read(document.querySelector('#input input').value);
-  bf.start();
-  document.querySelector('#output span').innerText = bf.output;
-};
-document.querySelector('#step').onclick = () => {
-  if (ran == false) {
-    document.querySelector('#output span').innerText = '';
-    bf = new BF(document.querySelector('#code input').value);
-    bf.read(document.querySelector('#input input').value);
-    console.log('new bf started');
-    ran = true;
-  } else {
-    bf.step();
-    document.querySelector('#output span').innerText = bf.output;
-  }
-};
