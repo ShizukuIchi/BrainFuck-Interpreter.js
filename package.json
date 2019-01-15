@@ -1,0 +1,9 @@
+{
+  "name": "BrainFuck.js",
+  "version": "1.0.0",
+  "homepage": "https://sh1zuku.csie.io/BrainFuck.js",
+  "main": "index.html",
+  "devDependencies": {
+    "gh-pages": "^2.0.1"
+  }
+}
